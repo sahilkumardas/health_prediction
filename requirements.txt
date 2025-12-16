@@ -2,6 +2,7 @@ Flask
 joblib
 numpy
 scikit-learn
-sqlite3
+
 gunicorn
+
 
