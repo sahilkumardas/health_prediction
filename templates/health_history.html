@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Health History | HeartCare AI</title>
+
+<style>
+body{
+    margin:0;
+    font-family:Poppins,sans-serif;
+    background:linear-gradient(135deg,#021a35,#003d70,#001e40);
+    color:white;
+}
+.container{
+    max-width:900px;
+    margin:60px auto;
+    padding:30px;
+    background:rgba(255,255,255,0.07);
+    backdrop-filter:blur(12px);
+    border-radius:20px;
+}
+h2{
+    text-align:center;
+    margin-bottom:25px;
+}
+table{
+    width:100%;
+    border-collapse:collapse;
+}
+th,td{
+    padding:14px;
+    text-align:center;
+}
+th{
+    background:rgba(255,255,255,0.15);
+}
+tr{
+    background:rgba(255,255,255,0.05);
+}
+tr:not(:last-child){
+    border-bottom:1px solid rgba(255,255,255,0.1);
+}
+.high{
+    color:#ff7675;
+    font-weight:600;
+}
+.low{
+    color:#55efc4;
+    font-weight:600;
+}
+.empty{
+    text-align:center;
+    opacity:0.8;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+    <h2>Health History</h2>
+
+    {% if records %}
+    <table>
+        <tr>
+            <th>Date</th>
+            <th>Result</th>
+            <th>Probability (%)</th>
+        </tr>
+
+        {% for r in records %}
+        <tr>
+            <td>{{ r[0] }}</td>
+            <td class="{{ 'high' if r[1]=='High Risk' else 'low' }}">
+                {{ r[1] }}
+            </td>
+            <td>{{ r[2] }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+        <p class="empty">No prediction history available</p>
+    {% endif %}
+</div>
+
+</body>
+</html>

@@ -1,0 +1,309 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>HeartCare AI</title>
+
+  <style>
+    :root{
+      --bg1:#0f1724;
+      --bg2:#0b3d91;
+      --accent:#ff6b6b;
+      --accent2:#ffd86b;
+      --glass: rgba(255,255,255,0.08);
+      --muted: rgba(255,255,255,0.65);
+      font-family: Inter, system-ui;
+    }
+
+    body{
+      margin:0;
+      min-height:100vh;
+      background:linear-gradient(180deg,var(--bg1),var(--bg2));
+      color:#fff;
+      display:grid;
+      place-items:center;
+      padding:90px 24px;
+    }
+
+    /* ---------- TOP BAR ---------- */
+    .topbar{
+      position:fixed;
+      top:0; left:0; right:0;
+      height:60px;
+      display:flex;
+      align-items:center;
+      gap:16px;
+      padding:0 24px;
+      background:rgba(0,0,0,0.3);
+      backdrop-filter: blur(10px);
+      z-index:1000;
+    }
+
+    .hamburger{
+      font-size:26px;
+      cursor:pointer;
+      user-select:none;
+    }
+
+    .welcome{
+      font-size:14px;
+      color:#ffd86b;
+      font-weight:600;
+      letter-spacing:0.3px;
+    }
+
+    .menu{
+      position:absolute;
+      top:60px;
+      left:24px;
+      background:rgba(15,23,36,0.95);
+      border:1px solid rgba(255,255,255,0.08);
+      border-radius:12px;
+      width:220px;
+      display:none;
+      flex-direction:column;
+      box-shadow:0 12px 30px rgba(0,0,0,0.6);
+    }
+
+    .menu a{
+      padding:12px 16px;
+      color:white;
+      text-decoration:none;
+      font-size:14px;
+    }
+
+    .menu a:hover{
+      background:rgba(255,255,255,0.08);
+    }
+
+    .menu a.logout{
+      color:#ff9a9a;
+      border-top:1px solid rgba(255,255,255,0.1);
+    }
+
+    /* ---------- MAIN ---------- */
+    .container{
+      max-width:980px;
+      width:100%;
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:24px;
+    }
+
+    .card{
+      background:var(--glass);
+      border:1px solid rgba(255,255,255,0.08);
+      border-radius:16px;
+      padding:24px;
+      box-shadow:0 8px 30px rgba(0,0,0,0.5);
+    }
+
+    h1{margin:0 0 6px}
+    .sub{color:var(--muted);font-size:14px}
+
+    form{
+      margin-top:16px;
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:12px;
+    }
+
+    .field{display:flex;flex-direction:column}
+    label{font-size:13px;margin-bottom:6px;color:var(--muted)}
+
+    input,select{
+      padding:10px 12px;
+      border-radius:10px;
+      border:1px solid rgba(255,255,255,0.1);
+      background:rgba(255,255,255,0.12);
+      color:#fff;
+      font-size:14px;
+    }
+
+    .full{grid-column:1/-1}
+
+    button{
+      margin-top:10px;
+      padding:12px;
+      border-radius:12px;
+      border:none;
+      font-weight:700;
+      cursor:pointer;
+      background:linear-gradient(90deg,var(--accent),var(--accent2));
+      color:#111;
+    }
+
+    .big{font-size:26px;margin:6px 0}
+
+    .meter{
+      height:12px;
+      background:rgba(255,255,255,0.15);
+      border-radius:8px;
+      overflow:hidden;
+    }
+
+    .meter span{
+      display:block;
+      height:100%;
+      width:0%;
+      background:linear-gradient(90deg,#6bffb3,#6bffd8);
+    }
+
+    @media(max-width:900px){
+      .container{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="hamburger" id="hamburger">☰</div>
+
+  <!-- ✅ WELCOME USER NAME -->
+  <div class="welcome">
+    Welcome, {{ name }}
+  </div>
+
+  <div class="menu" id="menu">
+    <a href="/profile">👤 View Profile</a>
+    <a href="/edit-profile">✏️ Edit Profile</a>
+    <a href="/health-history">🩺 Health History</a>
+    <a href="/settings">⚙️ Settings</a>
+    <a href="/logout" class="logout">🚪 Logout</a>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- LEFT CARD -->
+  <div class="card">
+    <h1>HeartCare AI</h1>
+    <p class="sub">Check heart disease chance using simple questions</p>
+
+    <form id="predictForm">
+
+      <div class="field">
+        <label>What is your age?</label>
+        <input type="number" name="age" required>
+      </div>
+
+      <div class="field">
+        <label>Gender</label>
+        <select name="sex">
+          <option value="1">Male</option>
+          <option value="0">Female</option>
+        </select>
+      </div>
+
+      <div class="field full">
+        <label>When do you feel chest pain?</label>
+        <select name="cp">
+          <option value="0">During physical activity</option>
+          <option value="1">Sometimes / unclear</option>
+          <option value="2">Gas or acidity pain</option>
+          <option value="3">No chest pain</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>Blood Pressure (BP)</label>
+        <input type="number" name="trestbps" required>
+      </div>
+
+      <div class="field">
+        <label>Cholesterol Level</label>
+        <input type="number" name="chol" required>
+      </div>
+
+      <div class="field full">
+        <label>Is fasting blood sugar more than 120?</label>
+        <select name="fbs">
+          <option value="1">Yes</option>
+          <option value="0">No</option>
+        </select>
+      </div>
+
+      <button type="submit" class="full">Check Heart Disease Chance</button>
+
+      <button type="button" id="resetBtn" class="full" style="display:none;">
+        Reset Form
+      </button>
+
+    </form>
+  </div>
+
+  <!-- RIGHT CARD -->
+  <div class="card">
+    <p class="sub">Prediction</p>
+    <h2 class="big" id="resultText">—</h2>
+    <p class="sub" id="probText">Probability: —</p>
+    <div class="meter"><span id="bar"></span></div>
+  </div>
+
+</div>
+
+<script>
+  const hamburger = document.getElementById("hamburger");
+  const menu = document.getElementById("menu");
+
+  hamburger.onclick = () => {
+    menu.style.display = menu.style.display === "flex" ? "none" : "flex";
+  };
+
+  document.addEventListener("click", e => {
+    if (!hamburger.contains(e.target) && !menu.contains(e.target)) {
+      menu.style.display = "none";
+    }
+  });
+
+  const form = document.getElementById("predictForm");
+  const resultText = document.getElementById("resultText");
+  const probText = document.getElementById("probText");
+  const bar = document.getElementById("bar");
+  const resetBtn = document.getElementById("resetBtn");
+
+  form.onsubmit = async e => {
+    e.preventDefault();
+
+    resultText.textContent = "Checking...";
+    probText.textContent = "Probability: ...";
+    bar.style.width = "0%";
+
+    const res = await fetch("/predict", {
+      method: "POST",
+      body: new FormData(form)
+    });
+
+    const data = await res.json();
+    const p = data.probability || 0;
+
+    bar.style.width = p + "%";
+    probText.textContent = `Probability: ${p}%`;
+
+    if (p < 40) {
+      resultText.textContent = "Low Chance of Heart Disease";
+      bar.style.background = "linear-gradient(90deg,#6bffb3,#6bffd8)";
+    } else if (p < 70) {
+      resultText.textContent = "Medium Chance of Heart Disease";
+      bar.style.background = "linear-gradient(90deg,#ffd86b,#ffb347)";
+    } else {
+      resultText.textContent = "High Chance of Heart Disease";
+      bar.style.background = "linear-gradient(90deg,#ff6b6b,#ffb3b3)";
+    }
+
+    resetBtn.style.display = "block";
+  };
+
+  resetBtn.onclick = () => {
+    form.reset();
+    resultText.textContent = "—";
+    probText.textContent = "Probability: —";
+    bar.style.width = "0%";
+    resetBtn.style.display = "none";
+  };
+</script>
+
+</body>
+</html>
