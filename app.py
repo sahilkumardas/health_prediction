@@ -186,20 +186,20 @@ def delete_account():
     conn.close()
     session.clear()
     return jsonify(success=True)
-
-# ---------------- PREDICT (SAFE) ----------------
+#--------------PREDICT--------
 @app.route("/predict", methods=["POST"])
 def predict():
     if model is None or scaler is None:
         return jsonify(error="Model not loaded"), 500
 
     try:
-        age = float(request.form["age"])
-        sex = float(request.form["sex"])
-        cp = float(request.form["cp"])
-        trestbps = float(request.form["trestbps"])
-        chol = float(request.form["chol"])
-        fbs = float(request.form["fbs"])
+        # SAFE input handling
+        age = float(request.form.get("age", 0))
+        sex = float(request.form.get("sex", 0))
+        cp = float(request.form.get("cp", 0))
+        trestbps = float(request.form.get("trestbps", 0))
+        chol = float(request.form.get("chol", 0))
+        fbs = float(request.form.get("fbs", 0))
 
         # Default ML values
         restecg = 0
@@ -225,12 +225,16 @@ def predict():
         else:
             result = "Low Chance of Heart Disease"
 
-        conn = sqlite3.connect("users.db")
+        # SAFE session access
+        user_email = session.get("user_email", "guest")
+
+        # SAFE DB insert
+        conn = sqlite3.connect("users.db", timeout=10)
         c = conn.cursor()
         c.execute(
             "INSERT INTO history VALUES(NULL,?,?,?,?)",
             (
-                session["user_email"],
+                user_email,
                 result,
                 probability,
                 datetime.now().strftime("%d-%m-%Y")
@@ -242,8 +246,10 @@ def predict():
         return jsonify(prediction=result, probability=probability)
 
     except Exception as e:
+        print("❌ PREDICT ERROR:", e)
         return jsonify(error=str(e)), 500
 
 # ---------------- RUN ----------------
 if __name__ == "__main__":
     app.run(debug=True)
+
